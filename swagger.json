@@ -17,8 +17,16 @@
       "description": "기념품 관련 API"
     },
     {
+      "name": "추천 준비물 관리",
+      "description": "추천 준비물 관련 API"
+    },
+    {
       "name": "맛집",
       "description": "맛집 관련 API"
+    },
+    {
+      "name": "가방 관리",
+      "description": "가방 CRUD API"
     },
     {
       "name": "관광지",
@@ -27,9 +35,454 @@
     {
       "name": "여행지",
       "description": "여행지 CRUD API"
+    },
+    {
+      "name": "물품 관리",
+      "description": "가방의 물품 CRUD API"
+    },
+    {
+      "name": "회원 관리",
+      "description": "회원 관련 API"
     }
   ],
   "paths": {
+    "/api/member": {
+      "post": {
+        "tags": [
+          "회원 관리"
+        ],
+        "summary": "회원가입",
+        "description": "새로운 회원을 등록합니다.",
+        "operationId": "createMember",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "요청 데이터가 유효하지 않음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "잘못된 요청입니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "회원가입 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "홍길동님이 회원가입 되었습니다."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/member/{memberId}/bags/{bagId}/recommendeditem": {
+      "post": {
+        "tags": [
+          "추천 준비물 관리"
+        ],
+        "summary": "추천 준비물 추가",
+        "description": "추천 준비물을 가방에 추가합니다.",
+        "operationId": "addRecItemToBag",
+        "parameters": [
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "query",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecItemRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "추가 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "가방을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/member/{memberId}/bags/{bagId}/item": {
+      "get": {
+        "tags": [
+          "물품 관리"
+        ],
+        "summary": "물품 조회",
+        "description": "가방에 있는 물품을 카테고리별로 조회합니다.",
+        "operationId": "getItems",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "가방을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "물품 관리"
+        ],
+        "summary": "물품 생성",
+        "description": "가방에 새로운 물품을 생성합니다.",
+        "operationId": "createItem",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "가방을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "생성 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/member/{memberId}/bags/template/{templateId}": {
+      "post": {
+        "tags": [
+          "가방 관리"
+        ],
+        "summary": "가방 생성(홈 화면)",
+        "description": "템플릿의 플러스 버튼을 클릭하여 가방 생성FREESTYLE / WOMAN_SOLO / MAN_SOLO / BUSINESS",
+        "operationId": "createTemporaryBag",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "template",
+            "in": "query",
+            "description": "템플릿 ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FREESTYLE",
+                "WOMAN_SOLO",
+                "MAN_SOLO",
+                "BUSINESS"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BagRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": {
+            "description": "회원을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "회원 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "생성 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BagResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/member/{memberId}/bags/{bagId}/name": {
+      "patch": {
+        "tags": [
+          "가방 관리"
+        ],
+        "summary": "가방 이름 수정(챙길것들 화면)",
+        "description": "특정 가방의 이름을 수정합니다.",
+        "operationId": "updateBagName",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BagRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "수정 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BagResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "가방을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/member/{memberId}/bags/{bagId}/item/{itemId}/name": {
+      "patch": {
+        "tags": [
+          "물품 관리"
+        ],
+        "summary": "물품 이름 수정",
+        "description": "가방의 특정 물품 이름을 수정합니다.",
+        "operationId": "updateItemName",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "물품 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "수정 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "물품을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "물품 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/souvenir/{location_id}": {
       "get": {
         "tags": [
@@ -56,10 +509,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SouvenirResponseDTO"
-                  }
+                  "$ref": "#/components/schemas/SouvenirsResponseDTO"
                 }
               }
             }
@@ -69,10 +519,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SouvenirResponseDTO"
-                  }
+                  "$ref": "#/components/schemas/SouvenirsResponseDTO"
                 }
               }
             }
@@ -111,10 +558,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RestaurantResponseDTO"
-                  }
+                  "$ref": "#/components/schemas/RestaurantsResponseDTO"
                 }
               }
             }
@@ -124,10 +568,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RestaurantResponseDTO"
-                  }
+                  "$ref": "#/components/schemas/RestaurantsResponseDTO"
                 }
               }
             }
@@ -258,10 +699,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AirlineResponseDTO"
-                  }
+                  "$ref": "#/components/schemas/AirlinesResponseDTO"
                 }
               }
             }
@@ -271,10 +709,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AirlineResponseDTO"
-                  }
+                  "$ref": "#/components/schemas/AirlinesResponseDTO"
                 }
               }
             }
@@ -313,10 +748,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AttractionResponseDTO"
-                  }
+                  "$ref": "#/components/schemas/AttractionsResponseDTO"
                 }
               }
             }
@@ -326,10 +758,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AttractionResponseDTO"
-                  }
+                  "$ref": "#/components/schemas/AttractionsResponseDTO"
                 }
               }
             }
@@ -341,10 +770,416 @@
           }
         ]
       }
+    },
+    "/api/member/{memberId}/recommendeditems": {
+      "get": {
+        "tags": [
+          "추천 준비물 관리"
+        ],
+        "summary": "추천 준비물 조회",
+        "description": "회원 및 가방 정보를 기반으로 추천 준비물을 조회합니다.",
+        "operationId": "getRecommendedItems",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "query",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "query",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "준비물 카테고리",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ESSENTIAL",
+                "CLOTHING",
+                "TOILETRIES",
+                "ELECTRONICS",
+                "MEDICAL",
+                "OTHER"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "회원 또는 가방을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecItemResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/member/{memberId}/bags": {
+      "get": {
+        "tags": [
+          "가방 관리"
+        ],
+        "summary": "가방 전체 조회(홈 화면)",
+        "description": "회원의 모든 가방을 조회합니다.",
+        "operationId": "getBags",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "회원을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "회원 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BagResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/member/{memberId}/bags/{bagId}": {
+      "get": {
+        "tags": [
+          "가방 관리"
+        ],
+        "summary": "가방 상세 조회(챙길것들 화면)",
+        "description": "특정 가방을 조회합니다.",
+        "operationId": "getBag",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "가방을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BagResponseDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "가방 관리"
+        ],
+        "summary": "가방 삭제(챙길것들 화면)",
+        "description": "특정 가방을 삭제합니다.",
+        "operationId": "deleteBag",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "가방을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "삭제 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방이 삭제되었습니다."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/member/{memberId}/bags/{bagId}/item/{itemId}": {
+      "delete": {
+        "tags": [
+          "물품 관리"
+        ],
+        "summary": "물품 삭제",
+        "description": "가방에서 특정 물품을 삭제합니다.",
+        "operationId": "deleteItem",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "description": "물품 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "삭제 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "삭제되었습니다."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "물품을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "물품 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "MemberRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "description": "회원가입 요청 데이터"
+      },
+      "RecItemRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ESSENTIAL",
+              "CLOTHING",
+              "TOILETRIES",
+              "ELECTRONICS",
+              "MEDICAL",
+              "OTHER"
+            ]
+          }
+        },
+        "description": "추천 준비물 요청 데이터"
+      },
+      "ItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ESSENTIAL",
+              "CLOTHING",
+              "TOILETRIES",
+              "ELECTRONICS",
+              "MEDICAL",
+              "OTHER"
+            ]
+          },
+          "packed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ItemRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ESSENTIAL",
+              "CLOTHING",
+              "TOILETRIES",
+              "ELECTRONICS",
+              "MEDICAL",
+              "OTHER"
+            ]
+          }
+        },
+        "description": "수정할 물품 정보"
+      },
+      "BagRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "description": "수정할 가방 정보"
+      },
+      "BagResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "FREESTYLE",
+              "WOMAN_SOLO",
+              "MAN_SOLO",
+              "BUSINESS"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemResponseDto"
+            }
+          },
+          "temporary": {
+            "type": "boolean"
+          }
+        }
+      },
       "SouvenirResponseDTO": {
         "type": "object",
         "properties": {
@@ -354,6 +1189,24 @@
           },
           "name": {
             "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "SouvenirsResponseDTO": {
+        "type": "object",
+        "properties": {
+          "location_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "souvenirs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SouvenirResponseDTO"
+            }
           }
         }
       },
@@ -369,6 +1222,24 @@
           },
           "signature": {
             "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "RestaurantsResponseDTO": {
+        "type": "object",
+        "properties": {
+          "location_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "restaurants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RestaurantResponseDTO"
+            }
           }
         }
       },
@@ -393,6 +1264,10 @@
       "CurrencyInfoDTO": {
         "type": "object",
         "properties": {
+          "location_id": {
+            "type": "integer",
+            "format": "int64"
+          },
           "country": {
             "type": "string"
           },
@@ -420,6 +1295,21 @@
           }
         }
       },
+      "AirlinesResponseDTO": {
+        "type": "object",
+        "properties": {
+          "location_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "airlines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AirlineResponseDTO"
+            }
+          }
+        }
+      },
       "AttractionResponseDTO": {
         "type": "object",
         "properties": {
@@ -429,6 +1319,47 @@
           },
           "name": {
             "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "AttractionsResponseDTO": {
+        "type": "object",
+        "properties": {
+          "location_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attractions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttractionResponseDTO"
+            }
+          }
+        }
+      },
+      "RecItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ESSENTIAL",
+              "CLOTHING",
+              "TOILETRIES",
+              "ELECTRONICS",
+              "MEDICAL",
+              "OTHER"
+            ]
           }
         }
       }
