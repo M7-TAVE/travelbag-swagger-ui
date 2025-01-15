@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080",
+      "url": "http://13.125.254.94:8080",
       "description": "Generated server url"
     }
   ],
@@ -31,6 +31,10 @@
     {
       "name": "관광지",
       "description": "관광지 관련 API"
+    },
+    {
+      "name": "조회 기능",
+      "description": "조회 관련 기능 API"
     },
     {
       "name": "가방 관리",
@@ -65,17 +69,6 @@
           "required": true
         },
         "responses": {
-          "400": {
-            "description": "요청 데이터가 유효하지 않음",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string",
-                  "example": "잘못된 요청입니다."
-                }
-              }
-            }
-          },
           "200": {
             "description": "회원가입 성공",
             "content": {
@@ -83,6 +76,17 @@
                 "schema": {
                   "type": "string",
                   "example": "홍길동님이 회원가입 되었습니다."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 데이터가 유효하지 않음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "잘못된 요청입니다."
                 }
               }
             }
@@ -131,6 +135,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecItemResponseDto"
+                }
+              }
+            }
+          },
           "404": {
             "description": "회원 또는 가방을 찾을 수 없음",
             "content": {
@@ -138,16 +152,6 @@
                 "schema": {
                   "type": "string",
                   "example": "가방 ID를 찾을 수 없습니다."
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "조회 성공",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/RecItemResponseDto"
                 }
               }
             }
@@ -342,16 +346,6 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "생성 성공",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ItemResponseDto"
-                }
-              }
-            }
-          },
           "404": {
             "description": "가방을 찾을 수 없음",
             "content": {
@@ -359,6 +353,16 @@
                 "schema": {
                   "type": "string",
                   "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "생성 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemResponseDto"
                 }
               }
             }
@@ -462,17 +466,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "수정 성공",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string",
-                  "example": "변경되었습니다."
-                }
-              }
-            }
-          },
           "404": {
             "description": "가방을 찾을 수 없음",
             "content": {
@@ -480,6 +473,17 @@
                 "schema": {
                   "type": "string",
                   "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "수정 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "변경되었습니다."
                 }
               }
             }
@@ -699,6 +703,46 @@
           "회원 관리"
         ],
         "operationId": "test",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login-success": {
+      "get": {
+        "tags": [
+          "login-controller"
+        ],
+        "operationId": "loginSuccess",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login-failure": {
+      "get": {
+        "tags": [
+          "login-controller"
+        ],
+        "operationId": "loginFailure",
         "responses": {
           "200": {
             "description": "OK",
@@ -940,17 +984,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "삭제 성공",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string",
-                  "example": "가방이 삭제되었습니다."
-                }
-              }
-            }
-          },
           "404": {
             "description": "가방을 찾을 수 없음",
             "content": {
@@ -958,6 +991,17 @@
                 "schema": {
                   "type": "string",
                   "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "삭제 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방이 삭제되었습니다."
                 }
               }
             }
@@ -1106,6 +1150,214 @@
         ]
       }
     },
+    "/api/feature/member/{memberId}/bag/{bagId}": {
+      "get": {
+        "tags": [
+          "조회 기능"
+        ],
+        "summary": "가방 아이템 목록 조회",
+        "description": "특정 가방의 전체 아이템 목록을 조회합니다.",
+        "operationId": "getBagItem",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "접근 권한 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BagItemResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "가방 아이템 목록 조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BagItemResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "존재하지 않는 회원/가방",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BagItemResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/feature/member/{memberId}/bag/{bagId}/template/{templateId}": {
+      "get": {
+        "tags": [
+          "조회 기능"
+        ],
+        "summary": "템플릿 아이템 목록 조회",
+        "description": "선택한 템플릿의 기본 아이템 목록을 조회합니다.",
+        "operationId": "getBagItem_1",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "templateId",
+            "in": "path",
+            "description": "템플릿 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "접근 권한 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateItemResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "템플릿 아이템 목록 조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateItemResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "존재하지 않는 회원/가방/템플릿",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateItemResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/feature/member/{memberId}/bag/{bagId}/recommended-items": {
+      "get": {
+        "tags": [
+          "조회 기능"
+        ],
+        "summary": "추천 아이템 목록 조회",
+        "description": "사용자를 위한 추천 아이템 목록을 조회합니다.",
+        "operationId": "getRecommendedItems_1",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "bagId",
+            "in": "path",
+            "description": "가방 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "접근 권한 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecommendedItemResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "추천 아이템 목록 조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendedItemResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "존재하지 않는 회원/가방",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecommendedItemResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/status": {
       "get": {
         "tags": [
@@ -1219,17 +1471,6 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "물품을 찾을 수 없음",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string",
-                  "example": "물품 ID를 찾을 수 없습니다."
-                }
-              }
-            }
-          },
           "200": {
             "description": "삭제 성공",
             "content": {
@@ -1237,6 +1478,17 @@
                 "schema": {
                   "type": "string",
                   "example": "삭제되었습니다."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "물품을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "물품 ID를 찾을 수 없습니다."
                 }
               }
             }
@@ -1482,6 +1734,78 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AirlineResponseDTO"
+            }
+          }
+        }
+      },
+      "BagItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "bagId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryItemDto"
+            }
+          }
+        }
+      },
+      "CategoryItemDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDto"
+            }
+          }
+        }
+      },
+      "ItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "TemplateItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "templateId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryItemDto"
+            }
+          }
+        }
+      },
+      "RecommendedItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDto"
             }
           }
         }
