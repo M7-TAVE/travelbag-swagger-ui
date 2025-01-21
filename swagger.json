@@ -7,15 +7,10 @@
   },
   "servers": [
     {
-      "url": "http://13.125.254.94:8080",
-      "description": "Generated server url"
+      "url": "https://api.jionly.tech"
     }
   ],
   "tags": [
-    {
-      "name": "기념품",
-      "description": "기념품 관련 API"
-    },
     {
       "name": "물품 관리",
       "description": "물품 관련 API"
@@ -23,14 +18,6 @@
     {
       "name": "추천 준비물 관리",
       "description": "추천 준비물 관련 API"
-    },
-    {
-      "name": "맛집",
-      "description": "맛집 관련 API"
-    },
-    {
-      "name": "관광지",
-      "description": "관광지 관련 API"
     },
     {
       "name": "조회 기능",
@@ -41,12 +28,16 @@
       "description": "가방 관련 API"
     },
     {
-      "name": "여행지",
-      "description": "여행지 CRUD API"
+      "name": "인증 관리",
+      "description": "OAuth2 인증, 로그아웃 및 로그인 상태 관련 API"
     },
     {
       "name": "회원 관리",
       "description": "회원 관련 API"
+    },
+    {
+      "name": "여행지",
+      "description": "여행지 관련 조회 API"
     }
   ],
   "paths": {
@@ -55,7 +46,7 @@
         "tags": [
           "회원 관리"
         ],
-        "summary": "회원가입 (\"회원1\" 저장되어있음)",
+        "summary": "회원가입",
         "description": "새로운 회원을 등록합니다.",
         "operationId": "createMember",
         "requestBody": {
@@ -105,17 +96,16 @@
         "parameters": [
           {
             "name": "memberId",
-            "in": "query",
+            "in": "path",
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
             "name": "bagId",
-            "in": "query",
+            "in": "path",
             "description": "가방 ID",
             "required": true,
             "schema": {
@@ -125,7 +115,7 @@
           },
           {
             "name": "categoryId",
-            "in": "query",
+            "in": "path",
             "description": "카테고리 ID",
             "required": true,
             "schema": {
@@ -172,8 +162,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -247,8 +236,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -310,8 +298,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -346,6 +333,16 @@
           "required": true
         },
         "responses": {
+          "200": {
+            "description": "생성 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemResponseDto"
+                }
+              }
+            }
+          },
           "404": {
             "description": "가방을 찾을 수 없음",
             "content": {
@@ -353,16 +350,6 @@
                 "schema": {
                   "type": "string",
                   "example": "가방 ID를 찾을 수 없습니다."
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "생성 성공",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ItemResponseDto"
                 }
               }
             }
@@ -385,8 +372,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -435,6 +421,50 @@
         }
       }
     },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "인증 관리"
+        ],
+        "summary": "로그아웃",
+        "description": "현재 사용자를 로그아웃 처리합니다.",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "로그아웃 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "message": "Logged out successfully",
+                    "authInfo": {
+                      "isAuthenticated": false,
+                      "kakaoId": null,
+                      "email": null,
+                      "nickname": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "로그아웃 중 서버 오류 발생",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "Unexpected error occurred"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/member/{memberId}/bags/{bagId}/toggle-temporary": {
       "patch": {
         "tags": [
@@ -450,8 +480,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -466,17 +495,6 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "가방을 찾을 수 없음",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string",
-                  "example": "가방 ID를 찾을 수 없습니다."
-                }
-              }
-            }
-          },
           "200": {
             "description": "수정 성공",
             "content": {
@@ -484,6 +502,17 @@
                 "schema": {
                   "type": "string",
                   "example": "변경되었습니다."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "가방을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방 ID를 찾을 수 없습니다."
                 }
               }
             }
@@ -506,8 +535,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -571,8 +599,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -637,8 +664,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -697,70 +723,10 @@
         }
       }
     },
-    "/test": {
-      "get": {
-        "tags": [
-          "회원 관리"
-        ],
-        "operationId": "test",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/login-success": {
-      "get": {
-        "tags": [
-          "login-controller"
-        ],
-        "operationId": "loginSuccess",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/login-failure": {
-      "get": {
-        "tags": [
-          "login-controller"
-        ],
-        "operationId": "loginFailure",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/souvenir/{location_id}": {
       "get": {
         "tags": [
-          "기념품"
+          "여행지"
         ],
         "summary": "여행지별 추천 기념품 조회",
         "description": "여행지별 추천 기념품 목록을 조회합니다.",
@@ -809,7 +775,7 @@
     "/api/restaurant/{location_id}": {
       "get": {
         "tags": [
-          "맛집"
+          "여행지"
         ],
         "summary": "여행지별 추천 맛집 조회",
         "description": "여행지별 추천 맛집 목록을 조회합니다.",
@@ -855,6 +821,52 @@
         ]
       }
     },
+    "/api/member/{memberId}": {
+      "get": {
+        "tags": [
+          "회원 관리"
+        ],
+        "summary": "회원조회",
+        "description": "회원 정보를 조회합니다.",
+        "operationId": "getMember",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "description": "회원 ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "요청 데이터가 유효하지 않음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "잘못된 요청입니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "회원조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "회원조회 되었습니다."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/member/{memberId}/bags": {
       "get": {
         "tags": [
@@ -870,8 +882,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
@@ -915,8 +926,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -931,16 +941,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "조회 성공",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BagResponseDto"
-                }
-              }
-            }
-          },
           "404": {
             "description": "가방을 찾을 수 없음",
             "content": {
@@ -948,6 +948,16 @@
                 "schema": {
                   "type": "string",
                   "example": "가방 ID를 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BagResponseDto"
                 }
               }
             }
@@ -968,8 +978,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -984,17 +993,6 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "가방을 찾을 수 없음",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string",
-                  "example": "가방 ID를 찾을 수 없습니다."
-                }
-              }
-            }
-          },
           "200": {
             "description": "삭제 성공",
             "content": {
@@ -1002,6 +1000,17 @@
                 "schema": {
                   "type": "string",
                   "example": "가방이 삭제되었습니다."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "가방을 찾을 수 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "example": "가방 ID를 찾을 수 없습니다."
                 }
               }
             }
@@ -1165,8 +1174,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -1229,8 +1237,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -1303,8 +1310,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -1361,18 +1367,49 @@
     "/api/auth/status": {
       "get": {
         "tags": [
-          "auth-controller"
+          "인증 관리"
         ],
+        "summary": "인증 상태 확인",
+        "description": "현재 사용자의 인증 상태와 정보를 반환합니다.",
         "operationId": "getAuthStatus",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "인증 상태 반환 성공",
             "content": {
               "*/*": {
                 "schema": {
                   "type": "object",
-                  "additionalProperties": {
-                    "type": "object"
+                  "example": {
+                    "isAuthenticated": true,
+                    "kakaoId": "12345",
+                    "email": "user@example.com",
+                    "nickname": "nickname"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증되지 않은 사용자",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "isAuthenticated": false
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류 발생",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "error": "Unexpected error occurred"
                   }
                 }
               }
@@ -1384,7 +1421,7 @@
     "/api/attraction/{location_id}": {
       "get": {
         "tags": [
-          "관광지"
+          "여행지"
         ],
         "summary": "여행지별 추천 관광지 조회",
         "description": "여행지별 추천 관광지 목록을 조회합니다.",
@@ -1445,8 +1482,7 @@
             "description": "회원 ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {
@@ -1502,7 +1538,13 @@
       "MemberRequestDto": {
         "type": "object",
         "properties": {
-          "name": {
+          "kakaoId": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nickname": {
             "type": "string"
           }
         },
